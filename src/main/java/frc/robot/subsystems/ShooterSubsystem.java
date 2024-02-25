@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.ShooterConstants;
 import frc.robot.constants.TalonFXConstants;
 
-import static frc.robot.constants.ShooterConstants.MOTION_MAGIC_ACCELERATION;
+//import static frc.robot.constants.ShooterConstants.MOTION_MAGIC_ACCELERATION;
 //import static frc.robot.constants.ShooterConstants.SHOOTER_F;
 
 public class ShooterSubsystem extends SubsystemBase {
