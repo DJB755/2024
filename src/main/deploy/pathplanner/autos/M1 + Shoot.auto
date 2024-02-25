@@ -1,0 +1,37 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.15,
+      "y": 6.45
+    },
+    "rotation": 0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S to F1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "F1 to M1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "M1 to Shoot"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}
