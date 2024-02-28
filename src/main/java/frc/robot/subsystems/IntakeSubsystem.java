@@ -17,7 +17,7 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeBack = new TalonFX(IntakeConstants.INTAKE_BACK_ID);
 
 
-        var intakeConfigurator = intakeFront.getConfigurator();
+ /*     var intakeConfigurator = intakeFront.getConfigurator();
         var configs = new TalonFXConfiguration();
 
         configs.MotorOutput.Inverted = IntakeConstants.INTAKE_INVERSION;
@@ -25,7 +25,7 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeFront.getRotorVelocity().waitForUpdate(IntakeConstants.INTAKE_VELOCITY_STATUS_FRAME);
         intakeFront.getRotorPosition().waitForUpdate(IntakeConstants.INTAKE_POSITION_STATUS_FRAME);
         intakeConfigurator.apply(configs);
-        
+  */      
         intakeFront.setControl(new Follower(intakeBack.getDeviceID(), true));
 
     }
@@ -50,9 +50,10 @@ public class IntakeSubsystem extends SubsystemBase {
 
     } 
 
-    public void stop() {
-        intakeFront.stopMotor();
-        intakeBack.stopMotor();
+    public void rollStop() {
+        intakeFront.set(0);
+        intakeBack.set(0);
+        System.out.println("STOP");
     }
 
 

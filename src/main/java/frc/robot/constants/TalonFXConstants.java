@@ -1,6 +1,6 @@
 package frc.robot.constants;
 
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
+//import com.ctre.phoenix6.configs.TalonFXConfiguration;
 
 public final class TalonFXConstants {
     public static final int COUNTS_PER_REV = 2048;

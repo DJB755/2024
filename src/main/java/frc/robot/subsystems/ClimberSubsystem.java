@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+/* package frc.robot.subsystems;
 
 
 //import com.ctre.phoenix6.StatusSignal;
@@ -18,26 +18,19 @@ public class ClimberSubsystem extends SubsystemBase {
     private final TalonFX climberFalcon1;
 
     public ClimberSubsystem() {
-        climberFalcon1 = new TalonFX(ClimberConstants.CLIMBER_TALON_1, "canivoreBus");
-
-        var talon1Config = climberFalcon1.getConfigurator();
-        var motorConfig1 = new TalonFXConfiguration();
-        motorConfig1.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-
-        motorConfig1.FutureProofConfigs = true;
-        talon1Config.apply(motorConfig1);
+        climberFalcon1 = new TalonFX(ClimberConstants.CLIMBER_TALON_1);
     }
 
     @Override
     public void periodic() {
     }
 
-    public void climbUp() {
-        climberFalcon1.set(ClimberConstants.CLIMB_SPEED);
+    public void climbUp(double speed) {
+        climberFalcon1.set(speed);
     }
 
-    public void climbDown() {
-        climberFalcon1.set(-ClimberConstants.CLIMB_SPEED);
+    public void climbDown(double speed) {
+        climberFalcon1.set(-speed);
     }
 
     public void stopClimb() {
@@ -52,3 +45,5 @@ public class ClimberSubsystem extends SubsystemBase {
 
 
 }
+
+*/

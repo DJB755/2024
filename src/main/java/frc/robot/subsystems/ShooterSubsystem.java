@@ -67,67 +67,26 @@ public class ShooterSubsystem extends SubsystemBase {
 
          beamBreak = new DigitalInput(ShooterConstants.BEAM_BREAK);
 
-        motionMagicVelocityVoltage = new MotionMagicVelocityVoltage(0);
-//                velocity, MOTION_MAGIC_ACCELERATION, false, SHOOTER_F, 0, false, false, false);
-
-        var motionMagicConfigs = bottomMotorConfiguration.MotionMagic;
-        motionMagicConfigs.MotionMagicAcceleration = 400;
-        motionMagicConfigs.MotionMagicJerk = 4000;
-        bottomMotorConfigurator.apply(bottomMotorConfiguration);
-        topMotorConfigurator.apply(bottomMotorConfiguration);
-
 
     }
 
     @Override
  public void periodic() {
-//
-//        MotionMagicVelocityVoltage motionMagicVelocityVoltage = new MotionMagicVelocityVoltage(
-//                velocity, 0, true, ShooterConstants.SHOOTER_F, 0, false, false, false);
-//
-//        switch (shooterModes) {
-//            case SPEAKER:
-//                shooterStatus = ShooterStatus.FORWARD;
-//                //   if() Pose get y is above a certain value {
-//                //   Our main linear regression for RPM}
-//            break;
-//
-//            case BUMP:
-//                velocity = ShooterConstants.BUMP_FIRE_VEL;
-//                shooterStatus = ShooterStatus.FORWARD;
-//                rightKraken.setControl(motionMagicVelocityVoltage);
-//             break;
-//            case AMP:
-//                velocity = ShooterConstants.AMP_VEL;
-//                shooterStatus = ShooterStatus.FORWARD;
-//                rightKraken.setControl(motionMagicVelocityVoltage);
-//                break;
-//            case TRAP:
-//                velocity = ShooterConstants.TRAP_VEL;
-//                shooterStatus = ShooterStatus.FORWARD;
-//                rightKraken.setControl(motionMagicVelocityVoltage);
-//            case DEFAULT:
-//                velocity = ShooterConstants.DEFAULT_VEL;
-//                rightKraken.setControl(motionMagicVelocityVoltage);
-//                break;
-//        }
-//
-//
-//
+
    }
     public boolean getBeamBreak(){
         return beamBreak.get();
     }
 
-    public void spinBump() {
-        bumpFalcon.set(ShooterConstants.STAGE_SPEED);
+    public void spinBump(double speed){
+        bumpFalcon.set(speed);
     }
 
     public void shootFlywheel(double speed) {
-        bottomFalcon.set(speed);
+        bottomFalcon.set(-speed*.85);
         topFalcon.set(speed);
-        bumpFalcon.set(0.9); //
-        shooterStatus = ShooterStatus.FORWARD;
+      //  bumpFalcon.set(0.9); //
+    // shooterStatus = ShooterStatus.FORWARD;
     }
 
     public void setMode(ShooterModes mode) {
@@ -135,28 +94,17 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
 
+    public void stopBump(){
+        bumpFalcon.stopMotor();
+    }
+
     public void stopFlywheel() {
-        bottomFalcon.stopMotor();
-        topFalcon.stopMotor();
+        bottomFalcon.set(0);
+        topFalcon.set(0);
         bumpFalcon.stopMotor();
         shooterStatus = ShooterStatus.OFF;
     }
 
-
-    public void motionMagicTest(double vel){
-
-        topFalcon.setControl(motionMagicVelocityVoltage.withVelocity(vel));
-        bottomFalcon.setControl(motionMagicVelocityVoltage.withVelocity(vel));
-        bumpFalcon.set(1);
-
-
-    }
-//    public void testMotionMagic(double vel) {
-//        MotionMagicVelocityVoltage motionMagicVelocityVoltage = new MotionMagicVelocityVoltage(
-//                vel, 0, false, SHOOTER_F, 0, false, false, false);
-//        rightKraken.setControl(motionMagicVelocityVoltage);
-//        leftKraken.setControl(motionMagicVelocityVoltage);
-//    }
     public double getBottomEncoder() {
         return bottomFalcon.getRotorVelocity().getValue();
     }
@@ -185,7 +133,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
         topFalcon.setControl(motionMagicVelocityVoltage.withVelocity(vel));
         bottomFalcon.setControl(motionMagicVelocityVoltage.withVelocity(vel));
-        System.out.println((getFlywheelRPM()));
+     //   System.out.println((getFlywheelRPM()));
 
 }
 }

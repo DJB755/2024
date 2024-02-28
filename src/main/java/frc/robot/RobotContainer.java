@@ -23,7 +23,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 //import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.drivetrain.generated.TunerConstants;
 //import frc.robot.util.controllerUtils.MultiButton;
-import frc.robot.subsystems.ClimberSubsystem;
+//import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
@@ -34,16 +34,16 @@ import frc.robot.subsystems.drivetrain.*;
 public class RobotContainer {
 
     public final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
-    public final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
+//    public final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
     public final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
     public final VisionSubsystem visionSubsystem = new VisionSubsystem();
 
-  private double MaxSpeed = 6; // 6 meters per second desired top speed
+  private double MaxSpeed = 5 *.5; // 6 meters per second desired top speed change the decimal for speeding up
   private double MaxAngularRate = 2 * Math.PI; // 3/4 of a rotation per second max angular velocity
 
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final CommandXboxController driveStick = new CommandXboxController(0); //drivestick
-  private final CommandXboxController opStick = new CommandXboxController(0); // My joystick
+  private final CommandXboxController opStick = new CommandXboxController(1); // My joystick
 
   private final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; // My drivetrain
 
@@ -80,8 +80,28 @@ public class RobotContainer {
     //Op Xbox Controller
     
     opStick.x().whileTrue(
-    new StartEndCommand(() -> shooterSubsystem.setVelocity(125), shooterSubsystem::stopFlywheel));
+    new StartEndCommand(() -> shooterSubsystem.shootFlywheel(.30), shooterSubsystem::stopFlywheel));
+
+    opStick.leftTrigger().whileTrue(
+    new StartEndCommand(() -> shooterSubsystem.shootFlywheel(.14), shooterSubsystem::stopFlywheel));
+
+    opStick.b().whileTrue(
+       new StartEndCommand(() -> shooterSubsystem.spinBump(-.2), shooterSubsystem::stopBump));
+      
+    opStick.a().whileTrue(
+       new StartEndCommand(() -> shooterSubsystem.spinBump(.2), shooterSubsystem::stopBump));
    
+    driveStick.rightTrigger().whileTrue(
+      new StartEndCommand(()-> intakeSubsystem.roll(1), intakeSubsystem::rollStop));
+
+    driveStick.rightTrigger().whileTrue(
+      new StartEndCommand(() -> shooterSubsystem.spinBump(.4), shooterSubsystem::stopBump));
+     
+  //  opStick.rightTrigger().whileTrue( 
+  //    new StartEndCommand(() -> climberSubsystem.climbUp(.2), climberSubsystem::stopClimb));
+  //   opStick.leftTrigger().whileTrue( 
+  //    new StartEndCommand(() -> climberSubsystem.climbDown(.2), climberSubsystem::stopClimb));
+
   }
 
   public RobotContainer() {
