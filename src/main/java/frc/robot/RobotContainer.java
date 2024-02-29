@@ -8,6 +8,7 @@ package frc.robot;
 
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
+import com.pathplanner.lib.auto.NamedCommands;
 //import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 //import com.pathplanner.lib.path.PathPlannerPath;
@@ -80,7 +81,7 @@ public class RobotContainer {
     //Op Xbox Controller
     
     opStick.x().whileTrue(
-    new StartEndCommand(() -> shooterSubsystem.shootFlywheel(.30), shooterSubsystem::stopFlywheel));
+    new StartEndCommand(() -> shooterSubsystem.shootFlywheel(.3), shooterSubsystem::stopFlywheel));
 
     opStick.leftTrigger().whileTrue(
     new StartEndCommand(() -> shooterSubsystem.shootFlywheel(.14), shooterSubsystem::stopFlywheel));
@@ -107,7 +108,8 @@ public class RobotContainer {
   public RobotContainer() {
     configureBindings();
     
-
+    NamedCommands.registerCommand("intake", new StartEndCommand(()-> intakeSubsystem.roll(1), intakeSubsystem::rollStop));
+    NamedCommands.registerCommand("shoot",  new StartEndCommand(() -> shooterSubsystem.shootFlywheel(.30), shooterSubsystem::stopFlywheel));
 
   }
 
@@ -119,6 +121,6 @@ public class RobotContainer {
        // List<PathPlannerPath> pathGroup = PathPlannerAuto.getPathGroupFromAutoFile("M1 to Shoot");
 
         // Create a path following command using AutoBuilder. This will also trigger event markers.
-        return new PathPlannerAuto("M1 + Shoot");
+        return new PathPlannerAuto("Top Blue");
 }
 }

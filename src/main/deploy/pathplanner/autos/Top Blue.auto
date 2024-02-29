@@ -14,24 +14,36 @@
         {
           "type": "path",
           "data": {
-            "pathName": "S to F1"
+            "pathName": "Blue Shoot First"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "intake"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "F1 to M1"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "M1 to Shoot"
+            "pathName": "Speaker to Top Close Blue"
           }
         }
       ]
     }
   },
-  "folder": null,
+  "folder": "Blue",
   "choreoAuto": false
 }
