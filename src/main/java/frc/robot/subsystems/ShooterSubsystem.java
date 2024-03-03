@@ -4,6 +4,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
+import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -83,8 +84,23 @@ public class ShooterSubsystem extends SubsystemBase {
         bumpFalcon.set(speed);
     }
 
+    public void shootFlywheelVolts(double voltage){
+        bottomFalcon.setVoltage(-setpoint);
+        topFalcon.setVoltage(setpoint);
+
+    }
+
+    public void getBottomVelocity(){
+        bottomFalcon.getVelocity();
+    }
+
+    public void getTopVelocity(){
+        topFalcon.getVelocity();
+    }
+
+
     public void shootFlywheel(double speed) {
-        bottomFalcon.set(-speed*.85);
+        bottomFalcon.set(-speed);
         topFalcon.set(speed);
       //  bumpFalcon.set(0.9); //
     // shooterStatus = ShooterStatus.FORWARD;

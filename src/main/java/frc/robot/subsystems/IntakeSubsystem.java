@@ -7,12 +7,16 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj2.command.Command;
 //import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.constants.IntakeConstants;
 //import frc.robot.constants.TalonFXConstants;
 
 public class IntakeSubsystem extends SubsystemBase {
     TalonFX intakeFront;
     TalonFX intakeBack;
+
+    private static IntakeSubsystem m_Instance = null;
+
     public IntakeSubsystem() {
         intakeFront = new TalonFX(IntakeConstants.INTAKE_FRONT_ID);
         intakeBack = new TalonFX(IntakeConstants.INTAKE_BACK_ID);
@@ -54,9 +58,8 @@ public class IntakeSubsystem extends SubsystemBase {
     public void rollStop() {
         intakeFront.set(0);
         intakeBack.set(0);
-        System.out.println("STOP");
+    //    System.out.println("STOP");
     }
-
 
 
 

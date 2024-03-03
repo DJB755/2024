@@ -4,22 +4,39 @@
 
 package frc.robot;
 
+import java.util.List;
+
+import javax.lang.model.element.Parameterizable;
+
 //import java.util.List;
 
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 //import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.path.PathPlannerPath;
 //import com.pathplanner.lib.path.PathPlannerPath;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 //import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 //import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.drivetrain.generated.TunerConstants;
@@ -33,14 +50,13 @@ import frc.robot.subsystems.drivetrain.*;
 
 
 public class RobotContainer {
-
     public final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
 //    public final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
     public final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
     public final VisionSubsystem visionSubsystem = new VisionSubsystem();
 
-  private double MaxSpeed = 5 *.5; // 6 meters per second desired top speed change the decimal for speeding up
-  private double MaxAngularRate = 2 * Math.PI; // 3/4 of a rotation per second max angular velocity
+  private double MaxSpeed = 5 *(.75); // 6 meters per second desired top speed change the decimal for speeding up
+  private double MaxAngularRate = 2 * Math.PI *(.9); // 3/4 of a rotation per second max angular velocity
 
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final CommandXboxController driveStick = new CommandXboxController(0); //drivestick
@@ -56,6 +72,65 @@ public class RobotContainer {
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
   private final Telemetry logger = new Telemetry(MaxSpeed);
 
+  SendableChooser<Command> m_chooser = new SendableChooser<>();
+
+
+  private final Command TwoPiece =  new SequentialCommandGroup(
+           new ParallelCommandGroup(
+              new PathPlannerAuto("Blue Shoot First"),
+              new InstantCommand(()-> shooterSubsystem.shootFlywheel(.29))),
+           new WaitCommand(1.5),
+           new InstantCommand(()-> shooterSubsystem.spinBump(.4)),
+           new WaitCommand(.5),
+           new InstantCommand(()-> shooterSubsystem.stopFlywheel()),
+           new InstantCommand(()-> shooterSubsystem.stopBump()),
+           new InstantCommand(()-> intakeSubsystem.roll(1)),
+           new InstantCommand(()-> shooterSubsystem.spinBump(.2)),
+           new PathPlannerAuto("Speaker to Top Close Blue"),
+           new WaitCommand(1.5),
+           new InstantCommand(()-> shooterSubsystem.stopBump()),
+           new InstantCommand(()-> shooterSubsystem.spinBump(-.2)),
+           new WaitCommand(.05),
+           new ParallelCommandGroup(
+              new InstantCommand(()-> shooterSubsystem.shootFlywheel(.3)),
+              new PathPlannerAuto("Shoot 2 Blue")),
+          new WaitCommand(1.5),
+          new InstantCommand(()-> shooterSubsystem.spinBump(.4)),
+          new WaitCommand(2),
+          new InstantCommand(()-> shooterSubsystem.stopFlywheel()),
+          new InstantCommand(()-> shooterSubsystem.stopBump()),
+          new InstantCommand(()-> intakeSubsystem.rollStop()));
+
+
+           private final Command ShootOutside =  new SequentialCommandGroup(
+           new ParallelCommandGroup(
+              new PathPlannerAuto("Blue Shoot First"),
+              new InstantCommand(()-> shooterSubsystem.shootFlywheel(.29))),
+           new WaitCommand(1.5),
+           new InstantCommand(()-> shooterSubsystem.spinBump(.4)),
+           new WaitCommand(.5),
+           new InstantCommand(()-> shooterSubsystem.stopFlywheel()),
+           new InstantCommand(()-> shooterSubsystem.stopBump()),
+           new InstantCommand(()-> intakeSubsystem.roll(1)),
+           new InstantCommand(()-> shooterSubsystem.spinBump(.2)),
+           new PathPlannerAuto("Speaker to Top Close Blue"),
+           new WaitCommand(2),
+           new InstantCommand(()-> shooterSubsystem.stopBump()),
+           new InstantCommand(()-> shooterSubsystem.spinBump(-.2)),
+           new WaitCommand(.05),
+           new ParallelCommandGroup(
+              new InstantCommand(()-> shooterSubsystem.shootFlywheel(.3)),
+              new PathPlannerAuto("Shoot 2 Blue")),
+          new WaitCommand(1.5),
+          new InstantCommand(()-> shooterSubsystem.spinBump(.4)),
+          new WaitCommand(2),
+          new InstantCommand(()-> shooterSubsystem.stopFlywheel()),
+          new InstantCommand(()-> shooterSubsystem.stopBump()),
+          new InstantCommand(()-> intakeSubsystem.rollStop()));
+
+           
+           
+
   private void configureBindings() {
 
     //Driver Xbox Controller
@@ -65,6 +140,13 @@ public class RobotContainer {
             .withVelocityY(-driveStick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
             .withRotationalRate(-driveStick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
         ));
+
+    driveStick.leftTrigger().whileTrue( // Drivetrain will execute this command periodically
+        drivetrain.applyRequest(() -> drive.withVelocityX(-driveStick.getLeftY() * MaxSpeed*(.4)) // Drive forward with
+                                                                                           // negative Y (forward)
+            .withVelocityY(-driveStick.getLeftX() * MaxSpeed*(.4)) // Drive left with negative X (left)
+            .withRotationalRate(-driveStick.getRightX() * MaxAngularRate*(.4) // Drive counterclockwise with negative X (left)
+        )));    
 
     driveStick.a().whileTrue(drivetrain.applyRequest(() -> brake));
     driveStick.b().whileTrue(drivetrain
@@ -81,7 +163,7 @@ public class RobotContainer {
     //Op Xbox Controller
     
     opStick.x().whileTrue(
-    new StartEndCommand(() -> shooterSubsystem.shootFlywheel(.3), shooterSubsystem::stopFlywheel));
+    new StartEndCommand(() -> shooterSubsystem.shootFlywheel(.33), shooterSubsystem::stopFlywheel));
 
     opStick.leftTrigger().whileTrue(
     new StartEndCommand(() -> shooterSubsystem.shootFlywheel(.14), shooterSubsystem::stopFlywheel));
@@ -97,6 +179,14 @@ public class RobotContainer {
 
     driveStick.rightTrigger().whileTrue(
       new StartEndCommand(() -> shooterSubsystem.spinBump(.4), shooterSubsystem::stopBump));
+
+    opStick.y().whileTrue(
+       new StartEndCommand(() -> shooterSubsystem.spinBump(-.5), shooterSubsystem::stopBump));
+
+    opStick.y().whileTrue(
+       new StartEndCommand(() -> intakeSubsystem.roll(-.5), intakeSubsystem::rollStop));
+
+    
      
   //  opStick.rightTrigger().whileTrue( 
   //    new StartEndCommand(() -> climberSubsystem.climbUp(.2), climberSubsystem::stopClimb));
@@ -108,19 +198,42 @@ public class RobotContainer {
   public RobotContainer() {
     configureBindings();
     
-    NamedCommands.registerCommand("intake", new StartEndCommand(()-> intakeSubsystem.roll(1), intakeSubsystem::rollStop));
-    NamedCommands.registerCommand("shoot",  new StartEndCommand(() -> shooterSubsystem.shootFlywheel(.30), shooterSubsystem::stopFlywheel));
+     m_chooser.setDefaultOption("Two Piece", TwoPiece);
+     m_chooser.addOption("Shoot Outside", ShootOutside);
+
 
   }
 
     public Command getAutonomousCommand() {
-        // Load the path you want to follow using its name in the GUI
-        
-        //PathPlannerPath path = PathPlannerPath.fromPathFile("Example Path");
+   
+      return new SequentialCommandGroup(
+           new ParallelCommandGroup(
+              new PathPlannerAuto("Blue Shoot First"),
+              new InstantCommand(()-> shooterSubsystem.shootFlywheel(.29))),
+           new WaitCommand(1.5),
+           new InstantCommand(()-> shooterSubsystem.spinBump(.4)),
+           new WaitCommand(.5),
+           new InstantCommand(()-> shooterSubsystem.stopFlywheel()),
+           new InstantCommand(()-> shooterSubsystem.stopBump()),
+           new InstantCommand(()-> intakeSubsystem.roll(1)),
+           new InstantCommand(()-> shooterSubsystem.spinBump(.2)),
+           new PathPlannerAuto("Speaker to Top Close Blue"),
+           new InstantCommand(()-> shooterSubsystem.stopBump()),
+           new InstantCommand(()-> shooterSubsystem.spinBump(-.2)),
+           new WaitCommand(.05),
+           new ParallelCommandGroup(
+              new InstantCommand(()-> shooterSubsystem.shootFlywheel(.3)),
+              new PathPlannerAuto("Shoot 2 Blue")),
+          new WaitCommand(1.2),
+          new InstantCommand(()-> shooterSubsystem.spinBump(.4)),
+          new WaitCommand(1),
+          new InstantCommand(()-> shooterSubsystem.stopFlywheel()),
+          new InstantCommand(()-> shooterSubsystem.stopBump()),
+          new InstantCommand(()-> intakeSubsystem.rollStop())
+          );
 
-       // List<PathPlannerPath> pathGroup = PathPlannerAuto.getPathGroupFromAutoFile("M1 to Shoot");
+      
 
-        // Create a path following command using AutoBuilder. This will also trigger event markers.
-        return new PathPlannerAuto("Top Blue");
+     // return new PathPlannerAuto("Top Blue");
 }
 }

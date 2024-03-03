@@ -18,9 +18,14 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.subsystems.drivetrain.generated.TunerConstants;
@@ -60,6 +65,13 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
 
     public void periodic() {
         publisher.set(super.getState().ModuleStates);
+
+   NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
+   NetworkTable limelight1 = NetworkTableInstance.getDefault().getTable("limelight1");
+   NetworkTable limelight2 = NetworkTableInstance.getDefault().getTable("limelight2");
+
+
+
     }
 
     private void configurePathPlanner() {
